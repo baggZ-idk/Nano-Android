@@ -24,7 +24,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <libgen.h>
-#ifdef HAVE_PWD_H
+#if defined(HAVE_PWD_H) && !defined(__ANDROID__)
 #include <pwd.h>
 #endif
 #include <string.h>
@@ -147,7 +147,7 @@ const char *locking_suffix = ".swp";
  * existing version of that file.  Return TRUE on success; FALSE otherwise. */
 bool write_lockfile(const char *lockfilename, const char *filename, bool modified)
 {
-#if defined(HAVE_PWD_H) && defined(HAVE_GETEUID)
+#if defined(HAVE_PWD_H) && defined(HAVE_GETEUID) && !defined(__ANDROID__)
 	pid_t mypid = getpid();
 	uid_t myuid = geteuid();
 	struct passwd *mypwuid = getpwuid(myuid);
@@ -2303,7 +2303,7 @@ char *expand_leading_tilde(const char *path)
 		get_homedir();
 		tilded = copy_of(homedir);
 	} else {
-#ifdef HAVE_PWD_H
+#if defined(HAVE_PWD_H) && !defined(__ANDROID__)
 		const struct passwd *userdata;
 
 		tilded = measured_copy(path, i);
@@ -2373,7 +2373,7 @@ bool is_dir(const char *path)
 char **username_completion(const char *morsel, size_t length, size_t *num_matches)
 {
 	char **matches = NULL;
-#ifdef HAVE_PWD_H
+#if defined(HAVE_PWD_H) && !defined(__ANDROID__)
 	const struct passwd *userdata;
 
 	/* Iterate through the entries in the passwd file, and
